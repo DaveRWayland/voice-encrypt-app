@@ -1,71 +1,40 @@
-# ==================================================
-# 🌍 General
-# ==================================================
-.DS_Store
-Thumbs.db
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-package-lock.json
-.env
-.env.local
-.env.*.local
-*.tmp
-*.swp
+# Compiled output
+dist/
+tmp/
+out-tsc/
+bazel-out/
 
-# ==================================================
-# 🧩 Node.js (Backend)
-# ==================================================
-/voice-encrypt-backend/node_modules/
-/voice-encrypt-backend/dist/
-/voice-encrypt-backend/build/
-/voice-encrypt-backend/coverage/
-/voice-encrypt-backend/.env
-/voice-encrypt-backend/.env.local
-/voice-encrypt-backend/*.log
-/voice-encrypt-backend/npm-debug.log*
-/voice-encrypt-backend/yarn-error.log*
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
 
-# ==================================================
-# 💻 Angular (Frontend)
-# ==================================================
-/voice-encrypt-frontend/node_modules/
-/voice-encrypt-frontend/dist/
-/voice-encrypt-frontend/.angular/
-/voice-encrypt-frontend/.env
-/voice-encrypt-frontend/.env.local
-/voice-encrypt-frontend/src/environments/environment*.ts
-
-# ==================================================
-# 🧰 IDEs & Tools
-# ==================================================
-.vscode/
+# IDEs and editors
 .idea/
-*.sublime-project
+.project
+.classpath
+.c9/
+*.launch
+.settings/
 *.sublime-workspace
 
-# ==================================================
-# ⚙️ OS-specific
-# ==================================================
-# macOS
-*.DS_Store
-.AppleDouble
-.LSOverride
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
 
-# Windows
+# Miscellaneous
+.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Linux
-*~
-
-# ==================================================
-# 🧪 Testing
-# ==================================================
-/coverage/
-.nyc_output/
-jest-*
-*.lcov

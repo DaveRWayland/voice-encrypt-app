@@ -7,10 +7,10 @@
  *
  * --------------------------------------------------------
  */
-import { Request, Response } from "express";
-import { EncrypionService } from "../services/encryptionService";
+import { Request, Response } from 'express';
+import { EncryptionService } from '../services/encryptionService';
 
-const encryptionService = new EncrypionService();
+const encryptionService = new EncryptionService();
 
 /** ---------------------------------------------------------
  *
@@ -26,10 +26,10 @@ export const encryptText = (req: Request, res: Response) => {
 		const { text } = req.body;
 		const validateRegex = /^[a-zA-Z0-9\s.,!?'"()\-]+$/;
 
-		if (!text || typeof text !== "string" || !validateRegex.test(text)) {
+		if (!text || typeof text !== 'string' || !validateRegex.test(text)) {
 			res.status(400).json({
 				success: false,
-				error: "Ingrese un texto valido",
+				error: 'Ingrese un texto valido',
 			});
 			return;
 		}
@@ -57,10 +57,10 @@ export const encryptText = (req: Request, res: Response) => {
 export const decryptText = (req: Request, res: Response) => {
 	try {
 		const { encryptedText } = req.body;
-		if (!encryptedText || typeof encryptedText !== "string") {
+		if (!encryptedText || typeof encryptedText !== 'string') {
 			res.status(400).json({
 				success: false,
-				error: "Ingrese un texto encriptado valido",
+				error: 'Ingrese un texto encriptado valido',
 			});
 			return;
 		}

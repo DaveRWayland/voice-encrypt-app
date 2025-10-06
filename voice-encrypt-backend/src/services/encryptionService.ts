@@ -8,29 +8,29 @@
  * -------------------------------------------------------
  */
 
-import NodeRSA from "node-rsa";
-import fs from "fs";
-import path from "path";
+import NodeRSA from 'node-rsa';
+import fs from 'fs';
+import path from 'path';
 
-export class EncrypionService {
+export class EncryptionService {
 	private publicKey: NodeRSA;
 	private privateKey: NodeRSA;
 
 	constructor() {
-		const publicKeyPath = path.join(__dirname, "../../keys/public.key");
-		const privateKeypath = path.join(__dirname, "../../keys/private.key");
-		const publicKeyContent = fs.readFileSync(publicKeyPath, "utf8");
-		const privateKeyContent = fs.readFileSync(privateKeypath, "utf8");
+		const publicKeyPath = path.join(__dirname, '../../keys/public.key');
+		const privateKeypath = path.join(__dirname, '../../keys/private.key');
+		const publicKeyContent = fs.readFileSync(publicKeyPath, 'utf8');
+		const privateKeyContent = fs.readFileSync(privateKeypath, 'utf8');
 
-		this.publicKey = new NodeRSA(publicKeyContent, "public");
-		this.privateKey = new NodeRSA(privateKeyContent, "private");
+		this.publicKey = new NodeRSA(publicKeyContent, 'public');
+		this.privateKey = new NodeRSA(privateKeyContent, 'private');
 
 		this.publicKey.setOptions({
-			encryptionScheme: "pkcs1_oaep",
+			encryptionScheme: 'pkcs1_oaep',
 		});
 
 		this.privateKey.setOptions({
-			encryptionScheme: "pkcs1_oaep",
+			encryptionScheme: 'pkcs1_oaep',
 		});
 	}
 
@@ -47,7 +47,7 @@ export class EncrypionService {
 
 	encrypt(text: string): string {
 		try {
-			const encrypted = this.publicKey.encrypt(text, "base64");
+			const encrypted = this.publicKey.encrypt(text, 'base64');
 			return encrypted;
 		} catch (error) {
 			throw new Error(`Error al desencriptar. Error: ${error}`);
@@ -67,7 +67,7 @@ export class EncrypionService {
 
 	decrypt(encryptedText: string): string {
 		try {
-			const decrypted = this.privateKey.decrypt(encryptedText, "utf8");
+			const decrypted = this.privateKey.decrypt(encryptedText, 'utf8');
 			return decrypted;
 		} catch (error) {
 			throw new Error(`Error al desencriptar. Error: ${error}`);
@@ -86,6 +86,6 @@ export class EncrypionService {
 	 */
 
 	getPublicKey(): string {
-		return this.publicKey.exportKey("public");
+		return this.publicKey.exportKey('public');
 	}
 }

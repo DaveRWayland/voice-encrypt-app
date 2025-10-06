@@ -1,13 +1,11 @@
-/**
- * -------------- 🎙️ VOICE RECOGNITION SERVICE -------------
+/** --------------- 🎤 VOICE RECOGNITION SERVICE ----------------
  *
- *  Servicio de reconocimiento de voz utilizando la API Web Speech
- *  y convertirla en texto.
+ *  ervicio para manejar el reconocimiento de voz usando Speech API
+ *  Permite iniciar, detener el reconocimiento de voz y emitir
+ *  texto reconocido y manejar errores.
  *
- *  - Alfanumerico
- *  - Menor a 15 caracteres
- * ----------------------------------------------------------
- * */
+ * ---------------------------------------------------------------
+ */
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,96 +16,75 @@ declare global {
     SpeechRecognition: any;
   }
 }
+
 @Injectable({
   providedIn: 'root',
 })
 
-/**
- * ------------- CLASS VOICE RECOGNITION SERVICE -------------
+/** -------------- 🎩 RECOGNITION SERVICE CLASS ----------------
  *
- * @class VoiceRecognitionService
- * @attributes
- *   - recognition: instancia de la API de reconocimiento de voz
- *   - textSubject: BehaviorSubject para el texto reconocido
- *   - listeningSubject: BehaviorSubject para el estado de escucha
- *   - errorSubject: BehaviorSubject para errores
- * @events
- *   - onresult: obtiene el resultado del reconocimiento
- *   - onstart: comienza a escuchar
- *   - onend: termina de escuchar
- *   - onerror: maneja errores
- * @methods
- *   - start: inicia el reconocimiento de voz
- *   - stop: detiene el reconocimiento de voz
- *   - reset: resetea el texto y los errores
- *   - cleanText: limpia el texto removiendo espacios y caracteres no deseados
- *   - validateText: valida que el texto cumpla con los requisitos
- * @observables
- *   - text: observable del texto reconocido
- *   - listening: observable del estado de escucha
- *   - error: observable de errores
- * @uses Web Speech API
- * @description Servicio para el reconocimiento de voz.
+ *  @class VoiceRecognitionService
+ *  @description
+ *  Maneja el reconocimiento de voz usando la Web Speech API.
+ *  Permite iniciar y detener el reconocimiento, emitir texto reconocido,
+ *  y el manejo de errores.
  *
- * -----------------------------------------------------------
+ *  @property @private {BehaviorSubject<string>} textSubject - Subject para emitir texto
+ *  @property @public  {Observable<string>} text$ - Observable del texto reconocido
+ *  @property @private {BehaviorSubject<boolean>} listeningSubject - Subject para emitir el estado
+ *  @property @public  {Observable<boolean>} listening$ - Observable del estado
+ *  @property @private {BehaviorSubject<string>} errorSubject - Subject para emitir errores
+ *  @property @public  {Observable<string>} error$ - Observable de los mensajes de error
+ *  @property @private {RegExp} alphanumericRegex - Expresión regular para validar texto
+ *  @property @private {number} MAX_LENGTH - Longitud permitida
+ *
+ * ---------------------------------------------------------------
  */
 export class VoiceRecognitionService {
-  // Instancia del recognition
-  private recognition: any;
-
-  //Observer para el texto
+  private recognition: any = null;
+  private isRestarting = false;
   private textSubject = new BehaviorSubject<string>('');
-  public text: Observable<string> = this.textSubject.asObservable();
-
-  //Observer para listen state
+  public text$: Observable<string> = this.textSubject.asObservable();
   private listeningSubject = new BehaviorSubject<boolean>(false);
-  public listening: Observable<boolean> = this.listeningSubject.asObservable();
-
-  //Observer para errores
+  public listening$: Observable<boolean> = this.listeningSubject.asObservable();
   private errorSubject = new BehaviorSubject<string>('');
-  public error: Observable<string> = this.errorSubject.asObservable();
+  public error$: Observable<string> = this.errorSubject.asObservable();
+  private alphanumericRegex = /^[a-zA-Z0-9 ]*$/;
+  private readonly MAX_LENGTH = 15;
 
-  private alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
-  private MAX_LENGTH = 15;
+  // ---------------------- 🔨 CONSTRUCTOR -----------------------
 
   constructor() {
-    this.initRecognition();
+    if (typeof window !== 'undefined') {
+      this.initRecognition();
+    }
   }
 
-  /**
-   * ------------------ INIT RECOGNITION -----------------
-   *
-   * @private
-   * @method initRecognition
-   * @description Inicializa la instancia de SpeechRecognition
-   * y configura sus eventos.
-   *
-   * --------------------------------------------------------
+  /** --------------------------------------------------------------
+   *   @method initRecognition
+   *   @description Configura la instancia de `SpeechRecognition`.
+   *   @private
+   *   @returns {void}
+   *  --------------------------------------------------------------
    */
-  private initRecognition() {
-    const SpeechRecognition =
+  private initRecognition(): void {
+    const SpeechRecognition: any =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      window.alert(
-        'Ups... tu navegador aún no sabe escuchar. ¡Intenta con otro! 🎧'
-      );
       this.errorSubject.next(
-        'Ups... tu navegador aún no sabe escuchar. ¡Intenta con otro! 🎧'
+        'Ups! Tu navegador no soporta reconocimiento de voz.'
       );
+      console.error('❌ SpeechRecognition no soportado.');
       return;
     }
 
     this.recognition = new SpeechRecognition();
-
-    // CONFIG:  Configuracion del Recognition
-
-    this.recognition.lang = 'es-MX';
     this.recognition.continuous = true;
     this.recognition.interimResults = true;
+    this.recognition.lang = 'es-MX';
     this.recognition.maxAlternatives = 1;
 
-    // EVENT:  Cuando se obtenienen resultados
     this.recognition.onresult = (event: any) => {
       let transcript = '';
 
@@ -123,36 +100,46 @@ export class VoiceRecognitionService {
       }
     };
 
-    // EVENT: Comienza a escuchar
     this.recognition.onstart = () => {
-      console.log('🎤 Voice Recognition Init');
+      console.log('🎤 Escuchando...');
       this.listeningSubject.next(true);
       this.errorSubject.next('');
     };
 
-    // EVENT: Termina de escuchar
     this.recognition.onend = () => {
-      console.log('🔇 Voice Recognition End');
+      console.log('🔇 Reconocimiento detenido');
       this.listeningSubject.next(false);
+
+      if (this.isRestarting) {
+        console.log('♻️ Reiniciando escucha...');
+        this.isRestarting = false;
+        this.start();
+      }
     };
 
-    // EVENT: Error
+    // ---------------------- ⚠️ ERRORES ------------------------
+
     this.recognition.onerror = (event: any) => {
-      console.error('❌ Error en reconocimiento de voz:', event.error);
+      console.warn('⚠️ Error SpeechRecognition:', event.error);
 
       let errorMessage = '';
       switch (event.error) {
         case 'no-speech':
-          errorMessage = 'Eh? Mas fuerte no te escucho. 🤔';
+          errorMessage =
+            'Silencio detectado. ¿Cortaste comunicación con la máquina? 🤖';
           break;
         case 'audio-capture':
           errorMessage =
-            '🚀 Micrófono no encontrado. Conéctalo y activa tu voz.';
+            'Ups, tu micro está bloqueado 🔒. Dale permiso y deja que te escuche';
           break;
         case 'not-allowed':
-          errorMessage =
-            'Tu micrófono se negó a cooperar. Dale acceso para escucharte.';
+          errorMessage = 'Permiso denegado. 🎙️ Ayúdame a escucharte';
           break;
+        case 'aborted':
+          console.info(
+            'Tranquilo, el micro se tomó un respiro 😮‍💨. Intentemos de nuevo'
+          );
+          return;
         default:
           errorMessage = `Error: ${event.error}`;
       }
@@ -162,90 +149,111 @@ export class VoiceRecognitionService {
     };
   }
 
-  /**
-   * Limpia el texto removiendo espacios y caracteres no deseados
+  /** --------------------------------------------------------------
+   *   @method cleanText
+   *   @description
+   *   Limpia el texto de entrada eliminando espacios duplicados
+   *   y caracteres invalidos
+   *   @private
+   *   @param {string} text - Texto a limpiar
+   *   @returns {string} Texto procesado
+   * ---------------------------------------------------------------
    */
   private cleanText(text: string): string {
     return text
       .trim()
-      .replace(/\s+/g, '')
-      .replace(/[^a-zA-Z0-9]/g, '');
+      .replace(/\s{2,}/g, ' ')
+      .replace(/[^a-zA-ZÀ-ÿ0-9 ]/g, '');
   }
 
-  /* ------------------- VALIDATION ------------------ */
-
+  /** --------------------------------------------------------------
+   *   @method validateText
+   *   @description Verifica que el texto cumpla con el formato
+   *   @private
+   *   @param {string} text - Texto a validar
+   *   @returns {boolean} `true` si el texto es válido, `false` si no lo es
+   *  ---------------------------------------------------------------
+   */
   private validateText(text: string): boolean {
-    /**
-     * -------------------- VALIDATE TEXT --------------------
-     *
-     * @private
-     * @method validateText
-     * @description Valida que el texto cumpla con los
-     * requisitos de longitud y formato alfanumérico.
-     * @param text El texto a validar.
-     * --------------------------------------------------------
-     */
-
-    //LONGITUD
     if (text.length > this.MAX_LENGTH) {
-      this.errorSubject.next(`¡Uy! Solo caben 15 caracteres 😅`);
+      this.errorSubject.next(`Maximo ${this.MAX_LENGTH} caracteres`);
       return false;
     }
 
-    //ALFANUMERICO
     if (!this.alphanumericRegex.test(text)) {
-      this.errorSubject.next('Hey, solo letras. Nada de símbolos raros 😅');
+      this.errorSubject.next('Solo puedes usar letras, números y espacios 😊');
       return false;
     }
+
     return true;
   }
 
-  /** ----------------- START RECOGNITION ----------------
-   *
-   *  @method start
-   *  @returns void
-   *  @description:Inicia el reconocimiento de voz
-   *  1. Limpia el texto previo
-   *  2. Limpia errores previos
-   *  3. Inicia el recognition
-   * --------------------------------------------------------
+  /** --------------------------------------------------------------
+   *   @method start
+   *   @public
+   *   @description Inicia el proceso de reconocimiento de voz
+   * ---------------------------------------------------------------
    */
-
   start(): void {
-    if (this.recognition) {
-      this.textSubject.next(''); // Limpia el texto anterior
+    if (!this.recognition) return;
+
+    if (this.listeningSubject.value) {
+      console.warn('🟡 Ya se está escuchando');
+      return;
+    }
+
+    try {
+      this.textSubject.next('');
       this.errorSubject.next('');
       this.recognition.start();
+    } catch (err: any) {
+      if (err.name === 'InvalidStateError') {
+        console.log('El sistema se reinició, hablemos de nuevo 🎙️');
+        this.isRestarting = true;
+        this.recognition.stop();
+      } else {
+        console.error(
+          'Parece que algo falló al activar el micrófono. Intenta reiniciar:',
+          err
+        );
+      }
     }
   }
 
-  /**
-   * ------------------ STOP RECOGNITION -----------------
-   *
-   *  @method stop
-   *  @returns void
-   *  @description: Detiene el reconocimiento de voz
-   * --------------------------------------------------------
+  /** --------------------------------------------------------------
+   *   @method stop
+   *   @public
+   *   @description Detiene el proceso de reconocimiento de voz
+   * ---------------------------------------------------------------
    */
-
   stop(): void {
-    if (this.recognition) {
+    if (this.recognition && this.listeningSubject.value) {
       this.recognition.stop();
     }
   }
 
-  /**
-   * ------------------ RESET RECOGNITION -----------------
-   *
-   *  @method reset
-   *  @returns void
-   *  @description: Resetea el texto y errores
-   *
-   * --------------------------------------------------------
+  /** --------------------------------------------------------------
+   *   @method reset
+   *   @public
+   *   @description Restablece el texto reconocido
+   * ---------------------------------------------------------------
    */
-
   reset(): void {
     this.textSubject.next('');
     this.errorSubject.next('');
+  }
+
+  /** --------------------------------------------------------------
+   *   @method isSupported
+   *   @public
+   *   @description Comprueba si el navegador es compatible
+   *   @returns {boolean} true si el navegador soporta la Web `false` si no lo hace
+   *  ---------------------------------------------------------------
+   */
+  isSupported(): boolean {
+    return typeof window !== 'undefined' &&
+      (window.SpeechRecognition || window.webkitSpeechRecognition)
+      ? true
+      : false;
   }
 }

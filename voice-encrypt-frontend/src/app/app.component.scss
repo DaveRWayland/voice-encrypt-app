@@ -1,0 +1,913 @@
+// ============================================
+//          ⚙️ VARIABLES Y CONFIGURACIÓN
+// ============================================
+
+:root {
+  // principales
+  --color-primary: #fff;
+  --color-secondary: #fff;
+  --color-accent: #fff;
+  --color-danger: rgba(255, 71, 87, 0.5);
+  --color-success: rgba(71, 255, 150, 0.5);
+
+  // background
+  --bg-dark: #000000;
+  --bg-darker: #1a1a1a;
+  --bg-card: #eeea;
+  --bg-input: rgba(54, 54, 54, 0);
+
+  // Text
+  --text-primary: #fff;
+  --text-secondary: #fff;
+  --text-muted: #ffff;
+
+  // Glow & Shadows
+  --glow-primary: 0 0 20px rgba(245, 245, 255, 0.8);
+  --glow-secondary: 0 0 20px rgba(255, 245, 245, 0.7);
+  --glow-accent: 0 0 20px rgba(136, 136, 136, 0.6);
+
+  // Border
+  --border-radius: 25px;
+  --border-color: rgba(255, 255, 255, 0.7);
+}
+
+// ============================================
+//                 🌎 GLOBALES
+// ============================================
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// ============================================
+//             🏠 MAIN CONTAINER
+// ============================================
+
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+  position: relative;
+  overflow-x: hidden;
+  font-family: "Avenir LT Pro", sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+}
+
+// ============================================
+//                💫 PARTÍCULAS
+// ============================================
+
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: float linear infinite;
+  box-shadow: 0 0 10px white;
+  animation-fill-mode: forwards;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-150px) translateX(50px) scale(1.5);
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-200px) translateX(80px) scale(1);
+    opacity: 0;
+  }
+}
+
+// ============================================
+//                🧱 CONTENEDOR
+// ============================================
+
+.content-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+// ============================================
+//               🎴 MAIN CARD
+// ============================================
+
+.main-card {
+  margin-top: 4em;
+  width: 100%;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  border: 2px solid var(--border-color);
+  padding: 10px;
+  box-shadow: 0 10px 60px rgba(40, 40, 40, 0.3);
+  animation: fadeInUp 1s ease-out 0.3s backwards;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    animation: shimmer 5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+//                   📷 IMAGEN
+// ============================================
+
+.main-image-container {
+  display: flex;
+  justify-content: center;
+}
+.main-image {
+  opacity: 0.4;
+  width: 60%;
+  margin: 1.5em 0 1em;
+}
+// ============================================
+//                   🔠 TITULO
+// ============================================
+.title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+.title {
+  font-family: "Avenir Next LT Pro Bold", sans-serif;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bolder;
+  width: 80%;
+}
+.subtitle {
+  margin-top: 1em;
+  text-align: center;
+  font-size: 0.8em;
+  font-weight: 500;
+  width: 60%;
+  line-height: 25px;
+  font-style: normal;
+}
+
+// ============================================
+//            🔊 ONDAS DE AUDIO
+// ============================================
+
+.audio-visualizer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    opacity: 1;
+  }
+}
+
+.wave {
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(to top, white, #555);
+  border-radius: 10px;
+  animation: wave 1s ease-in-out infinite;
+  box-shadow: var(--glow-primary);
+
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: $i * 0.1s;
+    }
+  }
+}
+
+.audio-visualizer.active .wave {
+  animation: waveActive 0.6s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    height: 20px;
+  }
+  50% {
+    height: 10px;
+  }
+}
+
+@keyframes waveActive {
+  0%,
+  100% {
+    height: 15px;
+    transform: scaleY(1);
+  }
+  50% {
+    height: 50px;
+    transform: scaleY(1.5);
+  }
+}
+
+// ============================================
+//               🗳️ INPUT TEXT
+// ============================================
+
+.input-container {
+  margin: 1.8em auto;
+  width: 80%;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: white;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.voice-input {
+  margin-top: 1em;
+  width: 80%;
+  margin: 0 auto;
+  padding: 5px 0 10px;
+  font-style: normal;
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: "Avenir LT Pro", sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  &::placeholder {
+    font-weight: normal;
+    font-size: 0.7rem;
+    color: #fff;
+  }
+
+  &.has-text {
+    border-color: none;
+    box-shadow: white, inset 0 0 20px rgba(255, 255, 255, 0.4);
+    background: transparent;
+  }
+}
+
+.input-decoration {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #fff, #aaa);
+  transition: width 0.5s ease;
+}
+
+.voice-input.has-text ~ .input-decoration {
+  width: 100%;
+}
+
+// ============================================
+//                🎤 MICROBOTON
+// ============================================
+
+.mic-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.mic-button {
+  margin-bottom: 0.6em;
+  margin: 0.8em;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-secondary)
+  );
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 0px 30px rgba(255, 255, 255, 0.5);
+
+  &:hover:not(.disabled) {
+    transform: scale(0.95);
+    box-shadow: 0 0 40px rgba(71, 255, 150, 0.5);
+  }
+
+  &:active:not(.disabled) {
+    transform: scale(0.9);
+  }
+
+  &.listening {
+    animation: micPulse 1.5s ease-in-out infinite;
+    background: linear-gradient(
+      135deg,
+      var(--color-danger),
+      var(--color-secondary)
+    );
+    box-shadow: 0 0 30px rgba(255, 71, 87, 0.5);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: white;
+  }
+}
+
+.mic-button-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(71, 255, 150, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mic-button:hover:not(.disabled) .mic-button-glow {
+  opacity: 0.5;
+}
+
+@keyframes micPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 40px rgba(255, 71, 87, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(255, 71, 87, 0.9);
+  }
+}
+
+.mic-icon-container {
+  position: relative;
+  z-index: 1;
+}
+
+.mic-icon {
+  width: 35px;
+  height: 35px;
+  color: white;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.stop-icon {
+  fill: white;
+}
+
+.mic-button-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--bg-input);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+
+  &.active {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    background: rgba(255, 71, 87, 0.1);
+  }
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.status-indicator.active .status-dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 15px var(--color-danger);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+// ============================================
+//              🔘 ACTION BUTTONS
+// ============================================
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.action-button {
+  flex: 1;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:hover::before {
+    width: 800px;
+    height: 800px;
+  }
+
+  &:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.action-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.action-button.primary {
+  background: linear-gradient(
+    135deg,
+    rgba(71, 255, 150, 0),
+    rgba(71, 255, 150, 0.08)
+  );
+  color: rgba(11, 190, 90, 1);
+  border: 2px solid rgba(11, 190, 90, 1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0px 14px rgba(71, 255, 150, 0.5);
+  }
+}
+
+.action-button.secondary {
+  background: linear-gradient(
+    35deg,
+    rgba(71, 255, 150, 0),
+    rgba(255, 50, 50, 0.08)
+  );
+  color: rgba(255, 50, 50, 1);
+  border: 2px solid rgba(255, 50, 50, 1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 14px rgba(255, 50, 50, 0.5);
+  }
+}
+
+.action-button.decrypt-button {
+  margin-bottom: 1.2em;
+  width: 100%;
+  margin-top: 20px;
+  background: linear-gradient(
+    50deg,
+    rgba(71, 255, 150, 0),
+    rgba(71, 255, 150, 0.08)
+  );
+  color: rgba(11, 190, 90, 1);
+  border: 2px solid rgba(11, 190, 90, 1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0px 14px rgba(71, 255, 150, 0.5);
+  }
+}
+
+// ============================================
+//                📩 MENSSAGES
+// ============================================
+
+.success-message,
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-top: 10px;
+  animation: slideIn 0.4s ease-out;
+}
+
+.success-message {
+  background: rgba(71, 255, 150, 0.1);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
+}
+
+.error-message {
+  background: rgba(255, 50, 50, 0.2);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+}
+
+.success-icon,
+.error-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ============================================
+//       ✔️ RESULTS (ENCRYPTED/DECRYPTED)
+// ============================================
+
+.result-container {
+  margin-top: 30px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.result-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(11, 190, 90, 1);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.result-box {
+  position: relative;
+  padding: 20px;
+  background: transparent;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.result-box.encrypted {
+  border-color: white;
+  background: rgba(245, 245, 245, 0.08);
+  font-weight: 200;
+}
+
+.result-box.decrypted {
+  font-family: "Avenit LT Pto", sans-serif;
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    rgba(71, 255, 150, 0),
+    rgba(71, 255, 150, 0.05)
+  );
+  border: solid 2px rgba(11, 190, 90, 1);
+  color: rgba(11, 190, 90, 1);
+  padding: 25px;
+}
+
+.result-text {
+  display: block;
+  color: var(--text-primary);
+  font-family: "Avenir LT Pro", sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  word-break: break-all;
+  padding-right: 50px;
+  font-weight: 300;
+
+  &.success {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-success);
+    text-align: center;
+    padding: 20px 0;
+  }
+}
+
+.decrypted-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.copy-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-primary);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.success-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(46, 213, 115, 0.2);
+  border: 1px solid var(--color-success);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--color-success);
+  font-weight: 600;
+  margin-top: 15px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ============================================
+//               🛠️ FOOTER
+// ============================================
+
+.tech-author {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+
+.tech-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(185, 185, 185, 0.2);
+  }
+}
+
+.tech-icon {
+  font-size: 1.1rem;
+}
+
+// ============================================
+//             📱 RESPONSIVE DESIGN
+// ============================================
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 30px 15px;
+    gap: 30px;
+  }
+
+  .main-image {
+    width: 60%;
+  }
+  .main-card {
+    width: 80%;
+    margin-top: 1em;
+  }
+  .audio-visualizer {
+    margin: 0;
+  }
+
+  .title {
+    font-size: 1.4rem;
+    width: 90%;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    line-height: 22px;
+  }
+
+  .main-card {
+    padding: 20px 10px;
+  }
+
+  .input-label {
+    font-size: 0.7rem;
+    gap: 6px;
+  }
+
+  .voice-input {
+    width: 100%;
+    padding: 0;
+
+    &::placeholder {
+      font-size: 0.7rem;
+    }
+  }
+
+  .voice-input {
+    font-size: 1.1rem;
+    padding: 12px 0;
+  }
+
+  .mic-button {
+    width: 70px;
+    height: 70px;
+  }
+
+  .mic-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .result-text {
+    font-size: 0.8rem;
+  }
+
+  .tech-author {
+    gap: 10px;
+  }
+
+  .tech-badge {
+    font-size: 0.75rem;
+    padding: 8px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-title {
+    font-size: 2rem;
+    gap: 10px;
+  }
+
+  .logo-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logo-icon {
+    width: 50px;
+    height: 50px;
+  }
+}

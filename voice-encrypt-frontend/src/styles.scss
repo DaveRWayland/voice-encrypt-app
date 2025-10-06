@@ -1,1 +1,65 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos Globales */
+
+// Importar fuente de Google Fonts
+@import url("https://fonts.cdnfonts.com/css/avenir-lt-pro");
+@import url("https://fonts.cdnfonts.com/css/avenir");
+
+@font-face {
+  font-family: "Avenir Next LT Pro Bold";
+  src: url("./assets/fonts/Avenir_Next_LT_Pro_Bold.otf");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Avenir LT Pro", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: #111;
+  background-image: url("./assets/images/black_glass.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+// Scroll personalizado
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060919;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ebebeb, #636363);
+  border-radius: 10px;
+
+  &:hover {
+    background: linear-gradient(180deg, #cacaca, #494949);
+  }
+}
+
+// Selección de texto
+::selection {
+  background: rgba(200, 200, 200, 0.3);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(200, 200, 200, 0.3);
+  color: #ffffff;
+}

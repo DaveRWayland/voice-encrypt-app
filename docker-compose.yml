@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Backend
+  backend:
+    build:
+      context: ./voice-encrypt-backend
+      dockerfile: Dockerfile
+    container_name: voice-encryption-backend
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./voice-encrypt-frontend
+      dockerfile: Dockerfile
+    container_name: voice-encryption-frontend
+    ports:
+      - '80:80'
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

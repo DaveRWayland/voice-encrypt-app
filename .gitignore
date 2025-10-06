@@ -3,13 +3,16 @@ dist/
 tmp/
 out-tsc/
 bazel-out/
+.angular/
+/.angular/
 
 # Node
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# IDEs and editors
+# IDEs and 
+.a
 .idea/
 .project
 .classpath
